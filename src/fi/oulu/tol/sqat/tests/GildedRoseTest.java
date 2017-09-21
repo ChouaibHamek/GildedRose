@@ -35,6 +35,13 @@ public class GildedRoseTest {
 	}
 	
 	@Test
+	public void testUpdateEndOfDay_WorksForEmptyList() {
+		GildedRose store = new GildedRose();
+		store.updateEndOfDay();		
+		assertEquals(0, store.getItems().size());
+	}
+	
+	@Test
 	public void testUpdateEndOfDay_Normal_Items_decrease_SellIn() {
 		GildedRose store = new GildedRose();
 		store.addItem(new Item("Item0", 15, 29) );
@@ -84,6 +91,15 @@ public class GildedRoseTest {
 	}
 	
 	@Test
+	public void testUpdateEndOfDay_Normal_Items_NotNegative2_Quality() {
+		GildedRose store = new GildedRose();
+		store.addItem(new Item("Item0", -1, 0) );
+		store.updateEndOfDay();
+		boolean NotNegative = (store.getItems().get(0).getQuality() >= 0); 
+		assertEquals(true, NotNegative);
+	}
+	
+	@Test
 	public void testUpdateEndOfDay_Normal_Items_NotMoreThanFifty_Quality() {
 		GildedRose store = new GildedRose();
 		store.addItem(new Item("Item0", 15, 50) );
@@ -109,17 +125,18 @@ public class GildedRoseTest {
 	}
 	
 	@Test
-	public void testUpdateEndOfDay_Sulfuras_Decrease_SellIn() {
+	public void testUpdateEndOfDay_AgedBrie_SellInPassed_Increase_Quality() {
+		// FAIL
 		GildedRose store = new GildedRose();
-		store.addItem(new Item("Sulfuras", 15, 80) );
+		store.addItem(new Item("Aged Brie", -1, 29) );
 		store.updateEndOfDay();
-		assertEquals(14, store.getItems().get(0).getSellIn());
+		assertEquals(30, store.getItems().get(0).getQuality());
 	}
-	
+
 	@Test
 	public void testUpdateEndOfDay_Sulfuras_Never_Sold() {
 		GildedRose store = new GildedRose();
-		store.addItem(new Item("Sulfuras", 3, 80) );
+		store.addItem(new Item("Sulfuras, Hand of Ragnaros", 3, 80) );
 		store.updateEndOfDay();
 		store.updateEndOfDay();
 		store.updateEndOfDay();
@@ -131,22 +148,13 @@ public class GildedRoseTest {
 		store.updateEndOfDay();
 		store.updateEndOfDay();
 		assertNotEquals(null, store.getItems().get(0));
-		assertEquals("Sulfuras",store.getItems().get(0).getName());
+		assertEquals(3,store.getItems().get(0).getSellIn());
 	}
 
 	@Test
 	public void testUpdateEndOfDay_Sulfuras_Constant80_Quality() {
 		GildedRose store = new GildedRose();
-		store.addItem(new Item("Sulfuras", 3, 80) );
-		store.updateEndOfDay();
-		store.updateEndOfDay();
-		store.updateEndOfDay();
-		store.updateEndOfDay();
-		store.updateEndOfDay();
-		store.updateEndOfDay();
-		store.updateEndOfDay();
-		store.updateEndOfDay();
-		store.updateEndOfDay();
+		store.addItem(new Item("Sulfuras, Hand of Ragnaros", 3, 80) );
 		store.updateEndOfDay();
 		assertEquals("Quality of Sulfuras not constant",80,store.getItems().get(0).getQuality());
 	}
